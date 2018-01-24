@@ -1,0 +1,2 @@
+-module(elevatorProject).
+-compile(export_all).
