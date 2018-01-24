@@ -22,7 +22,7 @@ init_system(Fl_Amount,
   get(draw_manager_PID) ! {clear_board},
   timer:sleep(1000),
   get(raport_manager_PID) ! {start, First_Elev_Start_Fl, Second_Elev_Start_Fl},
-  get(draw_manager_PID) ! {draw_board, Fl_Amount}.
+  get(draw_manager_PID) ! {draw_board, Fl_Amount, First_Elev_Start_Fl, Second_Elev_Start_Fl}.
   % main_loop().
 
 main_loop() ->
@@ -46,11 +46,10 @@ raport_manager() ->
 
 draw_manager() ->
   receive
-    {draw_board, Fl_Amount} ->
-      % Fl_List = lists:seq(0,Fl_Amount),
+    {draw_board, Fl_Amount, First_Elev_Fl, Second_Elev_Fl} ->
       io:format("Drawing board:\n"),
-      % draw_board(Fl_List),
-      draw_board_2(Fl_Amount),
+      % draw_board(Fl_Amount),
+      draw_board_3(Fl_Amount, First_Elev_Fl, Second_Elev_Fl),
       draw_manager();
     {clear_board} ->
       io:format("\e[H\e[J"),
@@ -60,13 +59,28 @@ draw_manager() ->
       draw_manager()
   end.
 
-draw_board([]) -> io:format("\n");
-draw_board([H|T]) ->
-  io:format("\n\t~p", [H]),
-  draw_board(T).
-
-
-draw_board_2(0) -> io:format("\n\t0|  | |  | | \n");
-draw_board_2(X) ->
+draw_board(0) -> io:format("\n\t0|  | |  | | \n");
+draw_board(X) ->
   io:format("\n\t~p|  | |  | | ", [X]),
-  draw_board_2(X-1).
+  draw_board(X-1).
+
+% end_drawing
+draw_board_3(0, _, _) ->
+  io:format("\n");
+% |X| |X|
+draw_board_3(Fl_Amount, First_Elev_Fl, Second_Elev_Fl) when First_Elev_Fl == Second_Elev_Fl
+                                                    andalso First_Elev_Fl == Fl_Amount ->
+  io:format("\n\t~p|  |X|  |X| ", [Fl_Amount]),
+  draw_board_3(Fl_Amount-1, First_Elev_Fl, Second_Elev_Fl);
+% |X| | |
+draw_board_3(Fl_Amount, First_Elev_Fl, Second_Elev_Fl) when First_Elev_Fl == Fl_Amount ->
+  io:format("\n\t~p|  |X|  | | ", [Fl_Amount]),
+  draw_board_3(Fl_Amount-1, First_Elev_Fl, Second_Elev_Fl);
+% | | |X|
+draw_board_3(Fl_Amount, First_Elev_Fl, Second_Elev_Fl) when Second_Elev_Fl == Fl_Amount ->
+  io:format("\n\t~p|  | |  |X| ", [Fl_Amount]),
+  draw_board_3(Fl_Amount-1, First_Elev_Fl, Second_Elev_Fl);
+% | | | |
+draw_board_3(Fl_Amount, First_Elev_Fl, Second_Elev_Fl) ->
+  io:format("\n\t~p|  | |  | | ", [Fl_Amount]),
+  draw_board_3(Fl_Amount-1, First_Elev_Fl, Second_Elev_Fl).
