@@ -1,27 +1,30 @@
 -module(elevatorProject).
 -compile(export_all).
 
-%%
-start(F_Amount, First_F, Last_F) when is_integer(F_Amount)
-                                andalso is_integer(First_F)
-                                andalso is_integer(Last_F)
-                                andalso First_F >= 0
-                                andalso First_F < Last_F
-                                ->
-  Root_PID = spawn(elevatorProject, init_manager, [F_Amount]),
-  put(root_PID, Root_PID).
-
-
-%%
-init_manager(F_Amount) ->
+% - Fl - is a Floor shortcut
+% - Elev - is a Elevator shortcut
+init_system(Fl_Amount,
+            First_Elev_Start_Fl,
+            Second_Elev_Start_Fl) when is_integer(Fl_Amount)
+                              andalso is_integer(First_Elev_Start_Fl)
+                              andalso is_integer(Second_Elev_Start_Fl)
+                              andalso First_Elev_Start_Fl >= 0
+                              andalso Second_Elev_Start_Fl >= 0
+                              andalso First_Elev_Start_Fl =< Fl_Amount
+                              andalso Second_Elev_Start_Fl =< Fl_Amount
+                              ->
   Raport_Manager_PID = spawn(elevatorProject, raport_manager, []),
-  Main_Loop_PID = spawn(elevatorProject, main_loop, []),
   put(raport_manager_PID, Raport_Manager_PID),
-  put(main_loop_PID, Main_Loop_PID),
-  get(raport_manager_PID) ! {start, 0, 0}.
 
+  get(raport_manager_PID) ! {start, First_Elev_Start_Fl, Second_Elev_Start_Fl},
+  main_loop().
 
-%%
+main_loop() ->
+  io:format("TEST\n"),
+  timer:sleep(1000),
+  main_loop().
+
+%
 raport_manager() ->
   receive
     {start, A_Floor_Pos, B_Floor_Pos} ->
@@ -33,9 +36,6 @@ raport_manager() ->
     _ ->
       io:format("Received error message in raport_manager function\n"),
       raport_manager()
-  end.
+    end.
 
-
-%%
-main_loop() ->
-  io:format("TEST\n").
+% draw_manager() ->
