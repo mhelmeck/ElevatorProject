@@ -26,7 +26,7 @@ init_system(Fl_Amount,
   put(current_PID, Current_PID),
 
   Star_Aimed_Floor = trunc(rand:uniform()*Fl_Amount),
-  main_loop(15, Fl_Amount, Star_Aimed_Floor, First_Elev_Start_Fl, Second_Elev_Start_Fl).
+  main_loop(25, Fl_Amount, Star_Aimed_Floor, First_Elev_Start_Fl, Second_Elev_Start_Fl).
 % - END - init_system
 
 
@@ -56,10 +56,10 @@ main_loop(N, Fl_Amount, Fl_Aimed, First_Elev_Fl, Second_Elev_Fl) ->
 % - END - main_loop
 
 handle_aim(Fl_Amount, Fl_Aimed, New_First_Elev_Fl, _) when New_First_Elev_Fl == Fl_Aimed ->
-  timer:sleep(500),
+  timer:sleep(800),
   trunc(rand:uniform()*Fl_Amount);
 handle_aim(Fl_Amount, Fl_Aimed, _, New_Second_Elev_Fl) when New_Second_Elev_Fl == Fl_Aimed ->
-  timer:sleep(500),
+  timer:sleep(800),
   trunc(rand:uniform()*Fl_Amount);
 handle_aim(_, Fl_Aimed, _, _) -> Fl_Aimed.
 
